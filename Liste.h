@@ -28,26 +28,23 @@ public:
     string getfichier();
     void setInstance(Liste* liste);
 	void viderListe();
-    void chargerListe();    //changer pour XML
     static Liste *chargerListe(string fichier);
     void sauvegarderListe(); //appelle sauvegarderListe avec fichier_ en parametre
-    //TODO void sauvegarderListe(string fichier); UTILISE XML
-    //TODO mergeWithList(string fichier); MERGE les deux et garde les joueurs modifies le plus recemment en cas de conflit
-	void trier();
+    void trier();
     string getRecherche();
     void recherche(string prefixe);
-    //static void setHighestId(int id) {highestId = id; }
-    //static int getHighestId() {return highestId;}
+    void setFichier(string fichier);
+    void setPresenceTous(bool presence);
+    void sauvegarderListe(string fichier);
+    static int highestId;
     //les fonctions ci-dessous devraient disparaitre dans le futur
     void transfererNotesJoueur(string autreFichier, string nomJoueur);
     string fileName(string fichier, string nomJoueur);
-    void setFichier(string fichier);
-    void setPresenceTous(bool presence);
-    static int highestId;
 
 
 
-    void sauvegarderListe(string fichier);
+
+
 private:
     std::vector<Joueur*> joueurs_, searchJoueurs_;
     string fichier_ = "", vieuFichier_ ="", researchPrefix ="", research;

@@ -102,12 +102,9 @@ void Liste::setPresenceTous(bool presence)
 }
 void Liste::viderListe() {
 	joueurs_.clear();
+    this->searchJoueurs_.clear();
+    this->highestId = 0;
 }
-void Liste::chargerListe(){
-
-    instance = xml::readList("Test123.xml");
-}
-
 Liste* Liste::chargerListe(string fichier)
 {
     Liste* tmp =  xml::readList(fichier);

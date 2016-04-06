@@ -27,7 +27,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    //Menu d'action avec clic droit
+    //Menu d'action avec clic droit?
+    //TODO Imprimer les notes pour chaque joueur present??
 
     //Il pourrait etre interessant de mettre les
 
