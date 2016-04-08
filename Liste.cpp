@@ -58,17 +58,23 @@ void Liste::ajouterJoueur(Joueur* joueur) {
 }
 void Liste::retirerJoueur(int position) { //À TESTER!!!!!!!!!!!!!!!
     if(researchPrefix.length() > 0){
-        for(int i = 0 ; i < joueurs_.size(); i ++)
-            if(joueurs_[i] == searchJoueurs_[position])
-                position = i;
+
+        Joueur* toDelete = searchJoueurs_[position];
+        for(int i = 0 ; i < joueurs_.size();i++){
+            if(joueurs_[i]->getId() == toDelete->getId()){
+                string tmp = researchPrefix;
+                recherche("");
+                this->retirerJoueur(i);
+                recherche(tmp);
+                return;
+            }
+        }
     }
     delete joueurs_[position];
 	joueurs_[position] = joueurs_.back();
 	joueurs_.pop_back();
     if(researchPrefix.length()>0){
-        string tmp = researchPrefix;
-        recherche("");
-        recherche(tmp);
+        recherche(researchPrefix);
    }
 }
 Joueur *Liste::getJoueur(int position) {
@@ -164,7 +170,7 @@ struct JoueurCompare{
 };
 
 void Liste::trier() {
-	sort(joueurs_.begin(), joueurs_.end());
+    sort(joueurs_.begin(), joueurs_.end(),JoueurCompare());
     sort(searchJoueurs_.begin(),searchJoueurs_.end(),JoueurCompare());
 }
 
@@ -174,7 +180,7 @@ string Liste::getRecherche()
 }
 void Liste::recherche(string prefixe) {
     this->searchJoueurs_.clear();
-    if(prefixe.length() > 0 && prefixe != researchPrefix){
+    if(prefixe.length() > 0){
 
         for(int i = 0 ; i < prefixe.length(); i++)
             prefixe[i] = std::tolower(prefixe[i]);

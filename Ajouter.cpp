@@ -43,6 +43,7 @@ void Ajouter::ajouterJoueur(){
     tmp->setPresent(this->ui->boxPresent->isChecked());
     Liste::getInstance()->ajouterJoueur(tmp);
 
+
 }
 
 void Ajouter::setDates(QComboBox* jour, QComboBox* mois, QComboBox* annee){

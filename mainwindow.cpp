@@ -109,6 +109,8 @@ void MainWindow::enableModifications(bool enable){
     this->ui->btnCompleterModif->setVisible(enable);
     this->ui->btnEffacer->setVisible(enable);
 
+    this->ui->btnAjouter->setEnabled(!enable);
+    this->ui->btnModifier->setEnabled(!enable);
     this->ui->btnPresence->setEnabled(!enable);
     this->ui->listWidget->setEnabled(!enable);
 
@@ -202,36 +204,43 @@ void MainWindow::getStatistics(){
 
 
 void MainWindow::resizeEvent(QResizeEvent* event){
-   /*
-    int totalWidth = event->size().width(),
-            totalHeight = event->size().height();
-    int oldWidth = event->oldSize().width(),
-            oldHeight = event->oldSize().height();
+/*
+    int attributableWidth = event->size().width(),
+            attributableHeight = event->size().height(),
+            widthGap = 25,
+            heightGap = 25;
+    int researchBarHeight = 30;
+    attributableWidth -= widthGap * 4;
+    attributableHeight -= heightGap * 2;
 
-    int deltaWidth = totalWidth - oldWidth,
-            deltaHeight = totalHeight - oldHeight;
-    int specificWidth = deltaWidth / 3;
-    int specificHeight = deltaHeight;
-    int midHeight = deltaHeight/3;
+    int specificWidth = attributableWidth / 3;
+    int middleHeight = (attributableHeight - 2 * heightGap) / 4;
+    //int midHeight = deltaHeight/3;
 
-    this->ui->listWidget->resize(this->ui->listWidget->size().width() + specificWidth,
-                                 this->ui->listWidget->size().height() + specificHeight);
-    this->ui->layoutMid1->setGeometry(QRect(this->ui->layoutMid1->geometry().left() + specificWidth,
-                                            this->ui->layoutMid1->geometry().top(),
-                                            this->ui->layoutMid1->geometry().width() + specificWidth,
-                                            this->ui->layoutMid1->geometry().height() + midHeight));
-    this->ui->layoutMid2->setGeometry(QRect(this->ui->layoutMid2->geometry().left() + specificWidth,
-                                            this->ui->layoutMid2->geometry().top() + midHeight,
-                                            this->ui->layoutMid2->geometry().width() + specificWidth,
-                                            this->ui->layoutMid2->geometry().height() + midHeight));
-    this->ui->layoutMid3->setGeometry(QRect(this->ui->layoutMid3->geometry().left() + specificWidth,
-                                            this->ui->layoutMid3->geometry().top() + 2*midHeight,
-                                            this->ui->layoutMid3->geometry().width() + specificWidth,
-                                            this->ui->layoutMid3->geometry().height() + midHeight));
-    this->ui->layoutRight1->setGeometry(QRect(this->ui->layoutRight1->geometry().left() + 2*specificWidth,
-                                            this->ui->layoutRight1->geometry().top(),
-                                            this->ui->layoutRight1->geometry().width() + specificWidth,
-                                            this->ui->layoutRight1->geometry().height() + specificHeight));
+    this->ui->listWidget->setGeometry(  widthGap,
+                                        heightGap,
+                                        specificWidth,
+                                        attributableHeight - researchBarHeight - researchBarHeight);
+    this->ui->boxRecherche->setGeometry( widthGap,
+                                         event->size().height() - researchBarHeight - 2*heightGap,//heightGap + this->ui->listWidget->height() + researchBarHeight,
+                                         specificWidth,
+                                         researchBarHeight);
+    this->ui->layoutMid1->setGeometry(QRect(widthGap + specificWidth + widthGap,
+                                            heightGap,
+                                            specificWidth,
+                                            attributableHeight));
+    this->ui->layoutMid2->setGeometry( QRect(widthGap + specificWidth + widthGap,
+                                            heightGap + middleHeight + heightGap,
+                                            specificWidth,
+                                            2* heightGap));
+    this->ui->layoutMid3->setGeometry(QRect(widthGap + specificWidth + widthGap,
+                                            heightGap + middleHeight + heightGap + 2*middleHeight + heightGap,
+                                            specificWidth,
+                                            middleHeight));
+    this->ui->layoutRight1->setGeometry(QRect(widthGap + specificWidth + widthGap + specificWidth + widthGap,
+                                            heightGap,
+                                            specificWidth,
+                                            attributableHeight));
 */
 
 }
@@ -243,11 +252,14 @@ void MainWindow::createPlayer(){
     wnd.exec();
 
     updateList();
+    Liste::getInstance()->sauvegarderListe();
 }
 
 void MainWindow::tousPresents(){
     Liste::getInstance()->setPresenceTous(true);
     updateList();
+
+
 }
 void MainWindow::tousAbsents(){
     Liste::getInstance()->setPresenceTous(false);
@@ -332,6 +344,7 @@ void MainWindow::finirModification(){
     tmp->setExp(this->ui->boxExp->value());
     tmp->setNotes(this->ui->boxNotes->toPlainText().toStdString());
     tmp->modified();
+    Liste::getInstance()->sauvegarderListe();
     this->ui->listWidget->currentItem()->setText(QString::fromStdString(tmp->toString()));
     getStatistics();
 }
@@ -340,7 +353,21 @@ void MainWindow::annulerModification(){
     chargerJoueur(this->ui->listWidget->currentRow());
 }
 void MainWindow::effacerJoueur(){
-    //TODO
+    QMessageBox box;
+    box.setText(tr("Êtes vous sûr de voir effacer ") + QString::fromStdString(Liste::getInstance()->getJoueur(this->ui->listWidget->currentRow())->getNom()));
+    box.setWindowTitle(tr("Effacer le joueur?"));
+    box.setInformativeText(tr("Cette opération est définitive"));
+    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    box.setDefaultButton(QMessageBox::No);
+    box.setBaseSize(600,150);
+    int result = box.exec();
+    if(result == QMessageBox::Yes){
+        Liste::getInstance()->retirerJoueur(this->ui->listWidget->currentRow());
+        Liste::getInstance()->sauvegarderListe();
+        this->enableModifications(false);
+        this->ui->boxRecherche->setText(tr(""));
+    updateList();
+    }
 }
 void MainWindow::recherche(QString search){
 
